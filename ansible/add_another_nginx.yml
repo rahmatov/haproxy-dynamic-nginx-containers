@@ -1,0 +1,22 @@
+- hosts: nginx
+  gather_facts: false
+  roles:
+  - role: run_nginx
+    container_name: "nginx4"
+    html_content: "this is {{container_name}} on port {{nginx_port}}"
+    nginx_port: 5004
+    sudo: yes
+
+- hosts: haproxy
+  gather_facts: false
+  vars:
+    nginx_guest_ip: "192.168.111.225"
+    NGINX_CONTAINER:
+    - { name: "nginx1", port: 5001 }
+    - { name: "nginx2", port: 5002 }
+    - { name: "nginx3", port: 5003 }
+
+  roles:
+  - role: add_backend_server_to_haproxy
+    sudo: yes
+  - role: verify_haproxy

@@ -1,0 +1,5 @@
+[nginx]
+nginx ansible_ssh_user=vagrant ansible_user=vagrant ansible_ssh_host=192.168.111.225 ansible_ssh_port=22 ansible_ssh_private_key_file=.vagrant/machines/nginx/virtualbox/private_key
+
+[haproxy]
+haproxy ansible_ssh_user=vagrant ansible_user=vagrant ansible_ssh_host=192.168.111.224 ansible_ssh_port=22 ansible_ssh_private_key_file=.vagrant/machines/haproxy/virtualbox/private_key

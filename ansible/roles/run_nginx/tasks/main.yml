@@ -1,0 +1,27 @@
+---
+
+- name: configure html dir
+  command: mkdir -p /var/www/html/{{container_name}}
+
+- name: copy template over
+  template: src=templates/index.html.j2 dest=/var/www/html/{{container_name}}/index.html
+
+- name: container does not exist
+  docker:
+    name: "{{container_name}}"
+    image: nginx
+    state: absent
+  ignore_errors: true
+  
+- name: start nginx containers
+  docker:
+    name: "{{container_name}}"
+    image: nginx
+    state: started
+    ports:
+    - "{{nginx_port}}:80"
+    volumes:
+    - "/var/www/html/{{container_name}}:/usr/share/nginx/html:ro"
+
+- name: wait for the website to respond
+  wait_for: host=0.0.0.0 port={{nginx_port}}

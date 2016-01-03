@@ -1,0 +1,16 @@
+---
+
+- name: install haproxy
+  apt: pkg=haproxy update-cache=yes
+
+- name: update default haproxy
+  template: src=templates/default_haproxy dest=/etc/default/haproxy
+  sudo: yes
+
+- name: process haproxy.cfg template
+  template: src=templates/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  sudo: yes
+
+- name: start haproxy
+  command: service haproxy start
+  sudo: yes

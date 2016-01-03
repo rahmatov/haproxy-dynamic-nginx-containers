@@ -1,0 +1,9 @@
+---
+
+- name: process haproxy.cfg template
+  template: src=templates/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  sudo: yes
+
+- name: reload haproxy
+  command: service haproxy reload
+  sudo: yes

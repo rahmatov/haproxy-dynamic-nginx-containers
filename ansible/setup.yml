@@ -1,0 +1,48 @@
+---
+
+- hosts: nginx
+  roles:
+
+  - role: virt_host_docker
+    sudo: yes
+    tags: dockerinstall
+
+- hosts: nginx
+  roles:
+  - role: run_nginx
+    tags: nginx
+    html_content: "This is me on {{container_name}} port {{nginx_port}}"
+    container_name: "nginx1"
+    nginx_port: "5001"
+    sudo: yes
+
+  - role: run_nginx
+    tags: nginx
+    html_content: "This is me on {{container_name}} port {{nginx_port}}"
+    container_name: "nginx2"
+    nginx_port: "5002"
+    sudo: yes
+
+  - role: run_nginx
+    tags: nginx
+    html_content: "This is me on {{container_name}} port {{nginx_port}}"
+    container_name: "nginx3"
+    nginx_port: "5003"
+    sudo: yes
+
+- hosts: haproxy
+  gather_facts: false
+  vars:
+    nginx_guest_ip: "192.168.111.225"
+    nginx_containers:
+    - { name: "nginx1", port: 5001 }
+    - { name: "nginx2", port: 5002 }
+
+  roles:
+
+  - role: haproxyinstall
+    sudo: yes
+    tags: haproxyinstall
+
+  - role: verify_haproxy
+    tags: verify_haproxy

@@ -1,7 +1,7 @@
-# Ha Proxy and dynamically adding docker web server containers.
+# HAProxy front end with scaleable nginx docker container backends.
 
-This repo demonstrates how you can dynamically add an nginx container into
-an ha server load balancer group.
+This repository demonstrates how you can dynamically add an nginx container into
+an [HAProxy](http://haproxy.com) load balanced server group.
 
 The repository contains a Vagrantfile to create an haproxy server which will load
 balance to another server running dockerized nginx conainers.
@@ -9,9 +9,18 @@ balance to another server running dockerized nginx conainers.
 Ansible is used to provision the ubuntu hosts, and then to add new nginx containers
 to the haproxy roundrobin.
 
+## Requirements
+
+This repository uses [Vagrant](https://docs.vagrantup.com/v2/installation/) for creating
+the two virtual servers and [Ansible](http://docs.ansible.com/intro_installation.html) for
+provisioning them. Refer to their documentation for installation details.
+
+I used [VirtualBox](https://www.virtualbox.org/wiki/Downloads) for my virtualization provider.
+
 ## Setup
 
-Run `vagrant up`
+1. Clone this repository
+2. Run `vagrant up`
 
 At the end of the setup, you should have two ubuntu guests, one for haproxy at 192.168.111.224, and one
 for the nginx containers. There will be two, serving a page from [http://192.168.111.225:5001/](http://192.168.111.225:5001/)
@@ -25,7 +34,9 @@ curl http://192.168.111.224/ and the nginx server will return information about 
 
 Each time you run the curl command, you should get content from the other container.
 
-To add another nginx container to the mix, run:
+## Adding antoher nginx container
+
+To add another nginx container to the mix, run the ansible play:
 
 `ansible-playbook -i ansible/inventory ansible/add_another_nginx.yml`
 
@@ -38,8 +49,7 @@ Curling again several times with the command above will show that the container 
 
 The HAProxy stats are served from [http://192.168.111.224:1936/](http://192.168.111.224:1936/)
 
-docker run --rm -v /usr/local/etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -p "80:80" haproxy:1.5 haproxy -f /usr/local/etc/haproxy/haproxy.cfg
-
 ## NOTES
 
 * ansible uses the private keys generated from Vagrant for VirtualBox, if you use another virtualization application, you'll have to make changes.
+* you may get caching if you test the streaming content from a web browser. I recommend using curl or wget to test the web content returned from the HAProxy front end.
